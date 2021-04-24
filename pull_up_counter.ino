@@ -54,10 +54,12 @@ LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 #define ECHO_PIN 2 
 
 SR04 sr04 = SR04(ECHO_PIN,TRIG_PIN);
-long a;
+long distance;
 long rep_counter;
 long last_val;
-
+long raw_distance;
+long distance_smoothed;
+float gamma;
 
 void setup() {
   
@@ -68,22 +70,32 @@ void setup() {
   lcd.begin(16, 2);
   // Print a message to the LCD.
   lcd.print("Hello, World!");
+  gamma = 0.99;
 }
 
 void loop() {
-  
-   a=sr04.Distance();
-   if (a < 50) {
+  raw_distance = sr04.Distance();
+  if (raw_distance == 1185) {
+    distance = 0;
+  }
+  else {
+    distance = raw_distance;
+  }
+   distance_smoothed = (0.9 * distance_smoothed) + (0.1 * distance);
+   //distance = sr04.Distance();
+   if (distance_smoothed < 9
+   
+   0) {
     if (last_val >= 50) {
       rep_counter += 1;
     }
    }
-   last_val = a;
+   last_val = distance_smoothed;
    
-   Serial.print(a);
+   Serial.print(distance_smoothed);
    Serial.println("cm");//The difference between "Serial.print" and "Serial.println" 
                         //is that "Serial.println" can change lines.
-   delay(100);
+   delay(10);
 
   
   // set the cursor to column 0, line 1
@@ -92,7 +104,7 @@ void loop() {
   lcd.clear();
   lcd.print(rep_counter);
   lcd.print("   ");
-  lcd.print(a);
+  lcd.print(distance_smoothed);
   lcd.setCursor(0, 1);
   // print the number of seconds since reset:
   lcd.print(millis() / 60000);
