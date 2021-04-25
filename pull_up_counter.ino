@@ -60,6 +60,12 @@ long last_val;
 long raw_distance;
 long distance_smoothed;
 float gamma;
+long threshold;
+long threshold_upper;
+long threshold_lower;
+long state;
+long last_state;
+long distance_smoothed_lower_limit;
 
 void setup() {
   
@@ -71,26 +77,43 @@ void setup() {
   // Print a message to the LCD.
   lcd.print("Hello, World!");
   gamma = 0.99;
+  threshold = 70;
+  threshold_upper = 80;
+  threshold_lower = 70;
+  state = 0;
+  distance_smoothed = sr04.Distance();
+  distance_smoothed_lower_limit = 60;
 }
 
 void loop() {
   raw_distance = sr04.Distance();
-  if (raw_distance == 1185) {
+  if (raw_distance > 1100) {
     distance = 0;
   }
   else {
     distance = raw_distance;
   }
    distance_smoothed = (0.9 * distance_smoothed) + (0.1 * distance);
+   if (distance_smoothed < distance_smoothed_lower_limit) {
+    distance_smoothed = distance_smoothed_lower_limit;
+   }
    //distance = sr04.Distance();
-   if (distance_smoothed < 9
+   //if (distance_smoothed < threshold) {
+
+  if (distance_smoothed > threshold_upper) {
+    state = 0;
+  } else if (distance_smoothed < threshold_lower){
+    state = 1;
+  }
    
-   0) {
-    if (last_val >= 50) {
+   if (last_state == 0) {
+    if (state == 1) {
+    //if (last_val >= threshold) {
       rep_counter += 1;
     }
    }
    last_val = distance_smoothed;
+   last_state = state;
    
    Serial.print(distance_smoothed);
    Serial.println("cm");//The difference between "Serial.print" and "Serial.println" 
@@ -105,6 +128,8 @@ void loop() {
   lcd.print(rep_counter);
   lcd.print("   ");
   lcd.print(distance_smoothed);
+  lcd.print("   ");
+  lcd.print(raw_distance);
   lcd.setCursor(0, 1);
   // print the number of seconds since reset:
   lcd.print(millis() / 60000);
