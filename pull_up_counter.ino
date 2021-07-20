@@ -66,6 +66,10 @@ long threshold_lower;
 long state;
 long last_state;
 long distance_smoothed_lower_limit;
+long delta_one_per_second;
+long delta_two_per_second;
+long delta_four_per_second;
+
 
 void setup() {
   
@@ -120,6 +124,10 @@ void loop() {
                         //is that "Serial.println" can change lines.
    delay(10);
 
+  delta_one_per_second = rep_counter - (millis() / (1 * 1000));
+  delta_two_per_second = rep_counter - (millis() / (2 * 1000)); 
+  delta_four_per_second = rep_counter - (millis() / (4 * 1000)); 
+
   
   // set the cursor to column 0, line 1
   // (note: line 1 is the second row, since counting begins with 0):
@@ -133,5 +141,11 @@ void loop() {
   lcd.setCursor(0, 1);
   // print the number of seconds since reset:
   lcd.print(millis() / 60000);
-  lcd.print(" min");
+  lcd.print("m");
+  lcd.print("  ");
+  lcd.print(delta_one_per_second);
+  lcd.print(" ");
+  lcd.print(delta_two_per_second);
+  lcd.print(" ");
+  lcd.print(delta_four_per_second);
 }
