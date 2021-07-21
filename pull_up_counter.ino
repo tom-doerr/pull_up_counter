@@ -134,15 +134,15 @@ void loop() {
   lcd.setCursor(0, 0);
   lcd.clear();
   lcd.print(rep_counter);
-  lcd.print("   ");
-  lcd.print(distance_smoothed);
-  lcd.print("   ");
-  lcd.print(raw_distance);
-  lcd.setCursor(0, 1);
-  // print the number of seconds since reset:
+  lcd.print("  ");
   lcd.print(millis() / 60000);
   lcd.print("m");
   lcd.print("  ");
+  lcd.print(distance_smoothed);
+  lcd.print(" ");
+  lcd.print(raw_distance);
+  // print the number of seconds since reset:
+  lcd.setCursor(0, 1);
   lcd.print(delta_one_per_second);
   lcd.print(" ");
   lcd.print(delta_two_per_second);
